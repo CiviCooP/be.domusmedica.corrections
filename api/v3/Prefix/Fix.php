@@ -28,7 +28,7 @@ function civicrm_api3_prefix_Fix($params) {
   }
   // get all contact from civicrm with contact type individual and linked titelcode from leden
   $sqlContact = "SELECT cc.id, cc.first_name, cc.last_name, ld.TitelCode AS titel_code
-FROM civicrm_contact cc LEFT JOIN domus_migratie.leden ld ON cc.id = ld.LidNummer
+FROM civicrm_contact cc LEFT JOIN leden ld ON cc.id = ld.LidNummer
 WHERE cc.contact_type = %1 AND ld.TitelCode IS NOT NULL AND ld.TitelCode != '' AND cc.modified_date < CURDATE() LIMIT 500";
   $contact = CRM_Core_DAO::executeQuery($sqlContact, array(1 => array('Individual', 'String')));
   if ($contact->N == 0) {
