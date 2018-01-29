@@ -44,7 +44,7 @@ function civicrm_api3_contribution_Fixstatus($params) {
       . ' (extensie be.domusmedica.corrections)'));
   }
 
-  $query = 'SELECT id FROM civicrm_contribution WHERE financial_type_id = %1 AND contribution_status_id = %2 AND is_test = %3';
+  $query = 'SELECT id FROM civicrm_contribution WHERE financial_type_id = %1 AND contribution_status_id = %2 AND is_test = %3 AND invoice_id IS NOT NULL';
   $dao = CRM_Core_DAO::executeQuery($query, array(
     1 => array($vormingFinTypeId, 'Integer'),
     2 => array($pendingStatusId, 'Integer'),
