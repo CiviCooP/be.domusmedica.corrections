@@ -27,7 +27,7 @@ function civicrm_api3_contribution_soft_Sepfix($params) {
   $dao = CRM_Core_DAO::executeQuery($query, [1 => [12, 'Integer']]);
   while ($dao->fetch()) {
     // update line item label
-    $newLabel = $dao->fee_label . ' (on behalf of ' . $dao->display_name
+    $newLabel = $dao->fee_label . ' (voor ' . $dao->display_name
       . '): ' . $dao->quantity;
     $update = 'UPDATE civicrm_line_item SET label = %1 WHERE id = %2';
     CRM_Core_DAO::executeQuery($update, [
