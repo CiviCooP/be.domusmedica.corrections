@@ -22,10 +22,16 @@ function civicrm_api3_domus_adres_Fixtype($params) {
   set_time_limit(0);
   $returnValues = [];
   $countRepaired = 0;
-  // haal alle contacten waarvoor een adres is
-  $query = "SELECT DISTINCT(contact_id) FROM civicrm_address WHERE contact_id IS NOT NULL LIMIT 1500";
+  // haal alle contacten die nog niet verwerkt zijn
+  $query = "SELECT contact_id FROM eh_adres_fixtype WHERE processed = 0 LIMIT 1500";
   $dao = CRM_Core_DAO::executeQuery($query);
   while ($dao->fetch()) {
+    // update tijdelijke tabel om aan te geven dat adres verwerkt is
+    $query = "UPDATE eh_adres_fixtype SET processed = %1 WHERE contact_id = %2";
+    CRM_Core_DAO::executeQuery($query, [
+      1 => [1, 'Integer'],
+      2 => [$dao->contact_id, 'Integer'],
+    ]);
     $returnValue = NULL;
     $domusAdres = new CRM_Corrections_Adres($dao->contact_id);
     // als wel correspondentie maar geen facturatie, kopieer correspondentie naar facturatie
@@ -44,7 +50,10 @@ function civicrm_api3_domus_adres_Fixtype($params) {
       $domusAdres->processNeither();
     }
   }
-  if ($countRepaired == 0) {
+  // geef aan als alles gerepareerd
+  $countQuery = "SELECT COUNT(*) FROM eh_adres_fixtype WHERE processed = %1";
+  $countAll = CRM_Core_DAO::singleValueQuery($countQuery, [1 => [0, 'Integer']]);
+  if ($countAll == 0) {
     $returnValues[] = ts('Alle adressen gerepareerd!');
   }
   else {
